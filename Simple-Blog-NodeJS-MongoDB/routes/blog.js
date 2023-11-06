@@ -119,14 +119,13 @@ router.post("/posts", async function (req, res) {
 
 router.get("/posts/:id/comments", async function (req, res) {
   const postId = new ObjectId(req.params.id);
-  const post = await db.getDb().collection("posts").findOne({ _id: postId });
   const comments = await db
     .getDb()
     .collection("comments")
     .find({ postId: postId })
     .toArray();
 
-  return res.render("post-detail", { post: post, comments: comments });
+  res.json(comments);
 });
 
 router.post("/posts/:id/comments", async function (req, res) {
@@ -137,7 +136,7 @@ router.post("/posts/:id/comments", async function (req, res) {
     text: req.body.text,
   };
   await db.getDb().collection("comments").insertOne(newComment);
-  res.redirect("/posts/" + req.params.id);
+  res.json({ message: "Comment Added!" });
 });
 
 module.exports = router;
